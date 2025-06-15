@@ -1,19 +1,32 @@
 const express = require('express');
-const fs = require('fs');
+const fs = require('fs').promises;
 const path = require('path');
 const router = express.Router();
 const DATA_PATH = path.join(__dirname, '../../../data/items.json');
 
-// Utility to read data (intentionally sync to highlight blocking issue)
-function readData() {
-  const raw = fs.readFileSync(DATA_PATH);
-  return JSON.parse(raw);
+// Utility to read data (non-blocking)
+async function readData() {
+  try {
+    const raw = await fs.readFile(DATA_PATH, 'utf8');
+    return JSON.parse(raw);
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      // If file doesn't exist, return empty array
+      return [];
+    }
+    throw error;
+  }
+}
+
+// Utility to write data (non-blocking)
+async function writeData(data) {
+  await fs.writeFile(DATA_PATH, JSON.stringify(data, null, 2), 'utf8');
 }
 
 // GET /api/items
-router.get('/', (req, res, next) => {
+router.get('/', async (req, res, next) => {
   try {
-    const data = readData();
+    const data = await readData();
     const { limit, q } = req.query;
     let results = data;
 
@@ -23,7 +36,11 @@ router.get('/', (req, res, next) => {
     }
 
     if (limit) {
-      results = results.slice(0, parseInt(limit));
+      const parsedLimit = parseInt(limit);
+      if (isNaN(parsedLimit) || parsedLimit < 0) {
+        return res.status(400).json({ error: 'Invalid limit parameter' });
+      }
+      results = results.slice(0, parsedLimit);
     }
 
     res.json(results);
@@ -33,15 +50,20 @@ router.get('/', (req, res, next) => {
 });
 
 // GET /api/items/:id
-router.get('/:id', (req, res, next) => {
+router.get('/:id', async (req, res, next) => {
   try {
-    const data = readData();
-    const item = data.find(i => i.id === parseInt(req.params.id));
-    if (!item) {
-      const err = new Error('Item not found');
-      err.status = 404;
-      throw err;
+    const data = await readData();
+    const id = parseInt(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ error: 'Invalid ID parameter' });
     }
+
+    const item = data.find(i => i.id === id);
+    if (!item) {
+      return res.status(404).json({ error: 'Item not found' });
+    }
+
     res.json(item);
   } catch (err) {
     next(err);
@@ -49,14 +71,52 @@ router.get('/:id', (req, res, next) => {
 });
 
 // POST /api/items
-router.post('/', (req, res, next) => {
+router.post('/', async (req, res, next) => {
   try {
-    // TODO: Validate payload (intentional omission)
     const item = req.body;
-    const data = readData();
+
+    // Comprehensive validation
+    const validationErrors = [];
+
+    // Name validation
+    if (!item.name) {
+      validationErrors.push('Name is required');
+    } else if (typeof item.name !== 'string') {
+      validationErrors.push('Name must be a string');
+    } else if (item.name.trim().length === 0) {
+      validationErrors.push('Name cannot be empty');
+    }
+
+    // Category validation
+    if (!item.category) {
+      validationErrors.push('Category is required');
+    } else if (typeof item.category !== 'string') {
+      validationErrors.push('Category must be a string');
+    } else if (item.category.trim().length === 0) {
+      validationErrors.push('Category cannot be empty');
+    }
+
+    // Price validation
+    if (item.price === undefined) {
+      validationErrors.push('Price is required');
+    } else if (typeof item.price !== 'number') {
+      validationErrors.push('Price must be a number');
+    } else if (item.price < 0) {
+      validationErrors.push('Price cannot be negative');
+    }
+
+    if (validationErrors.length > 0) {
+      return res.status(400).json({
+        error: 'Validation failed',
+        details: validationErrors
+      });
+    }
+
+    const data = await readData();
     item.id = Date.now();
     data.push(item);
-    fs.writeFileSync(DATA_PATH, JSON.stringify(data, null, 2));
+
+    await writeData(data);
     res.status(201).json(item);
   } catch (err) {
     next(err);
