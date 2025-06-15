@@ -52,5 +52,11 @@
     "category": "Electronics",
     "price": 5500,
     "id": 1750003619452
+  },
+  {
+    "name": "iphone16 PRO MAX",
+    "category": "Electronics",
+    "price": 6500,
+    "id": 1750005712940
   }
 ]
