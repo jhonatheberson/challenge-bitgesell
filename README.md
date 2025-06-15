@@ -64,7 +64,7 @@
 - [x]  Backend (Node.js):
 
   - [x] Refactor blocking I/O
-  - [ ] Performance
+  - [x] Performance
   - [ ] Testing
 
 - [] Frontend (React):

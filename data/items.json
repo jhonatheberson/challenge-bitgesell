@@ -40,5 +40,11 @@
     "category": "Electronics",
     "price": 3000,
     "id": 1749996479563
+  },
+  {
+    "name": "iphone16",
+    "category": "Electronics",
+    "price": 3500,
+    "id": 1749999374695
   }
 ]
