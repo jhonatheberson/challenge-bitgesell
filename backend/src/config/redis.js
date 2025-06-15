@@ -1,4 +1,7 @@
 const Redis = require('ioredis');
+const path = require('path');
+
+const DATA_PATH = process.env.DATA_PATH || path.join(__dirname, '../../../data/items.json');
 
 const redis = new Redis({
   host: process.env.REDIS_HOST || 'localhost',
@@ -17,4 +20,4 @@ redis.on('connect', () => {
   console.log('Connected to Redis');
 });
 
-module.exports = redis;
+module.exports = { redis, DATA_PATH };

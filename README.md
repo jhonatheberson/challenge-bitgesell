@@ -31,14 +31,11 @@
     <img alt="made by JhonatHeberson" src="https://img.shields.io/badge/made%20by-jhonatheberson-%237519C1">
   </a>
 
-  <!-- <a href="https://blog.rocketseat.com.br/">
-    <img alt="Stargazers" src="https://img.shields.io/badge/Blog-Rocketseat-%237159c1?style=flat&logo=ghost">
-    </a>  -->
 </p>
 
 <h4 align="center">
-  Status: development
-    <!-- Status: Finished -->
+  <!-- Status: development -->
+    Status: Finished
 </h4>
 
 <p align="center">
@@ -72,14 +69,14 @@
   - [x] Memory Leak
   - [x] Pagination & Search
   - [x] Performance
-  - [ ] UI/UX Polish
+  - [x] UI/UX Polish
 
 ---
 
 ### Web
 
 <p align="center" style="display: flex; align-items: flex-start; justify-content: center;">
-  <img alt="Ecoleta" title="#Ecoleta" src="./assets/web.svg" width="400px">
+  <img alt="Ecoleta" title="#Ecoleta" src="./assets/web-statistics.png" width="400px">
 </p>
 
 ## How it works
@@ -121,11 +118,13 @@ The Docker Compose setup includes:
 
 Services will be available at:
 
-- Frontend: <http://localhost:3000>
+- Frontend: <http://localhost>
 - Backend API: <http://localhost:3001>
 - Redis: localhost:6379
 
 #### Rodando o Backend (servidor)
+
+***need redis running 127.0.0.1:6379 locally to run via terminal***
 
 ```bash
 
@@ -152,7 +151,7 @@ $ npm start
 ```
 
 <p align="center">
-  <a href="https://github.com/jhonatheberson/challenge-bitgesell/blob/master/Insomnia_API_Ecoletajson.json" target="_blank"><img src="https://insomnia.rest/images/run.svg" alt="Run in Insomnia"></a>
+  <a href="https://github.com/jhonatheberson/challenge-bitgesell/blob/master/Insomnia_API.json" target="_blank"><img src="https://insomnia.rest/images/run.svg" alt="Run in Insomnia"></a>
 </p>
 
 #### Running the web application (Frontend)

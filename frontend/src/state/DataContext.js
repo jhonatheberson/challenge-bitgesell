@@ -1,4 +1,5 @@
 import React, { createContext, useCallback, useContext, useState } from 'react';
+import { getApiUrl } from '../config/api';
 
 const DataContext = createContext();
 
@@ -26,7 +27,7 @@ export function DataProvider({ children }) {
         ...(searchQuery && { q: searchQuery })
       });
 
-      const res = await fetch(`http://localhost:3001/api/items?${queryParams}`);
+      const res = await fetch(getApiUrl(`/api/items?${queryParams}`));
 
       if (!res.ok) {
         throw new Error('Failed to fetch items');

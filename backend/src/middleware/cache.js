@@ -1,8 +1,7 @@
-const redis = require('../config/redis');
+const { redis, DATA_PATH } = require('../config/redis');
 const fs = require('fs').promises;
 const path = require('path');
 
-const DATA_PATH = path.join(__dirname, '../../../data/items.json');
 const CACHE_TTL = 3600; // 1 hour in seconds
 
 const cacheMiddleware = (key) => {

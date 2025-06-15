@@ -1,0 +1,120 @@
+type: collection.insomnia.rest/5.0
+name: bitgesellFinance
+meta:
+  id: wrk_03de8df6124a4324bda38f1797875302
+  created: 1749994371877
+  modified: 1749994430341
+  description: ""
+collection:
+  - url: http://localhost:3001/api/stats/
+    name: /api/stats
+    meta:
+      id: req_5e0bd3b95a5041be9f7aae9d4a186819
+      created: 1749994371924
+      modified: 1749994575097
+      isPrivate: false
+      description: ""
+      sortKey: -1749994371924
+    method: GET
+    headers:
+      - name: User-Agent
+        value: insomnia/11.2.0
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:3001/api/items
+    name: /api/items
+    meta:
+      id: req_783c692e1ccf4ce1b518d1a7a915421f
+      created: 1749994599517
+      modified: 1749994722119
+      isPrivate: false
+      description: ""
+      sortKey: -1749994371874
+    method: GET
+    body:
+      mimeType: application/json
+      text: ""
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/11.2.0
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:3001/api/items/1750005712940
+    name: /api/items/:id
+    meta:
+      id: req_5d38929d89d44f2aa7b646aaf43f5a3e
+      created: 1749994637005
+      modified: 1750005721509
+      isPrivate: false
+      description: ""
+      sortKey: -1749994371824
+    method: GET
+    headers:
+      - name: User-Agent
+        value: insomnia/11.2.0
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: http://localhost:3001/api/items
+    name: /api/items
+    meta:
+      id: req_f876278ba3ff42628db2d61c46df99f8
+      created: 1749994684813
+      modified: 1750005711580
+      isPrivate: false
+      description: ""
+      sortKey: -1749994371849
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"name": "iphone16 PRO MAX",
+        	"category": "Electronics",
+        	"price": 6500
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+      - name: User-Agent
+        value: insomnia/11.2.0
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_cd025989043b7dd94e7c8c2a9b8cf7a2e5458647
+    created: 1749994371881
+    modified: 1749994371881
+environments:
+  name: Base Environment
+  meta:
+    id: env_cd025989043b7dd94e7c8c2a9b8cf7a2e5458647
+    created: 1749994371879
+    modified: 1749994371879
+    isPrivate: false

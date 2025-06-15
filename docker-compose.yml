@@ -1,6 +1,34 @@
 version: '3.8'
 
 services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - REACT_APP_API_URL=http://localhost:3001
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - DATA_PATH=/app/data/items.json
+      - NODE_ENV=production
+      - FRONTEND_URL=http://localhost
+    volumes:
+      - backend_data:/app/data
+    depends_on:
+      - redis
+
   redis:
     image: redis:alpine
     ports:
@@ -11,3 +39,4 @@ services:
 
 volumes:
   redis_data:
+  backend_data:
