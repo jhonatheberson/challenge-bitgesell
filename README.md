@@ -67,9 +67,9 @@
   - [x] Performance
   - [x] Testing
 
-- [] Frontend (React):
+- [x] Frontend (React):
 
-  - [ ] Memory Leak
+  - [x] Memory Leak
   - [ ] Pagination & Search
   - [ ] Performance
   - [ ] UI/UX Polish

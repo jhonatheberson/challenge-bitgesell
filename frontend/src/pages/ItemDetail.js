@@ -1,22 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useData } from '../state/DataContext';
 
 function ItemDetail() {
   const { id } = useParams();
-  const [item, setItem] = useState(null);
   const navigate = useNavigate();
+  const { items } = useData();
 
-  useEffect(() => {
-    fetch('/api/items/' + id)
-      .then(res => res.ok ? res.json() : Promise.reject(res))
-      .then(setItem)
-      .catch(() => navigate('/'));
-  }, [id, navigate]);
+  const item = items.find(item => item.id === parseInt(id));
 
-  if (!item) return <p>Loading...</p>;
+  if (!item) {
+    navigate('/');
+    return null;
+  }
 
   return (
-    <div style={{padding: 16}}>
+    <div style={{ padding: 16 }}>
       <h2>{item.name}</h2>
       <p><strong>Category:</strong> {item.category}</p>
       <p><strong>Price:</strong> ${item.price}</p>
