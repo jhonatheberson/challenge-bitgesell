@@ -7,7 +7,7 @@ const fs = require('fs').promises;
 const path = require('path');
 const router = express.Router();
 const { ValidationError, NotFoundError, asyncHandler } = require('../middleware/errorHandler');
-const DATA_PATH = path.join(__dirname, '../../../data/items.json');
+const DATA_PATH = '/app/data/items.json';
 
 /**
  * Reads items data from the JSON file

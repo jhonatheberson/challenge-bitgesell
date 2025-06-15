@@ -1,7 +1,6 @@
 const fs = require('fs').promises;
 const path = require('path');
-
-const DATA_PATH = path.join(__dirname, '../../../data/items.json');
+const { DATA_PATH } = require('../config/redis');
 
 async function readData() {
   try {

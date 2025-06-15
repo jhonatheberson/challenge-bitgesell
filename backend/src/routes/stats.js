@@ -4,8 +4,7 @@ const cacheMiddleware = require('../middleware/cache');
 const { readData } = require('../utils/fileUtils');
 const fs = require('fs').promises;
 const path = require('path');
-
-const DATA_PATH = path.join(__dirname, '../../../data/items.json');
+const { DATA_PATH } = require('../config/redis');
 
 // GET /api/stats
 router.get('/', cacheMiddleware('stats'), async (req, res, next) => {
