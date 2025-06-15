@@ -8,10 +8,22 @@ function Items() {
   useEffect(() => {
     let active = true;
 
-    // Intentional bug: setState called after component unmount if request is slow
-    fetchItems().catch(console.error);
+    const loadItems = async () => {
+      try {
+        const result = await fetchItems();
+        if (active) {
+          // Only updates the state if the component is still mounted
+          return result;
+        }
+      } catch (error) {
+        if (active) {
+          console.error(error);
+        }
+      }
+    };
 
-    // Clean‑up to avoid memory leak (candidate should implement)
+    loadItems();
+
     return () => {
       active = false;
     };
