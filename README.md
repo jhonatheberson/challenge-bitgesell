@@ -72,7 +72,7 @@
   - [x] Memory Leak
   - [x] Pagination & Search
   - [x] Performance
-  - [ ] UI/UX Polish
+  - [x] UI/UX Polish
 
 ---
 
