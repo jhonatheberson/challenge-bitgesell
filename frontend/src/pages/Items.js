@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useData } from '../state/DataContext';
 import { Link } from 'react-router-dom';
+import { FixedSizeGrid as Grid } from 'react-window';
+import AutoSizer from 'react-virtualized-auto-sizer';
 
 function Items() {
   const { items, pagination, loading, error, fetchItems } = useData();
@@ -27,6 +29,24 @@ function Items() {
     }
   };
 
+  const ItemCard = ({ columnIndex, rowIndex, style }) => {
+    const index = rowIndex * 3 + columnIndex;
+    if (index >= items.length) return null;
+
+    const item = items[index];
+    return (
+      <div style={style}>
+        <div className="item-card">
+          <Link to={`/items/${item.id}`}>
+            <h3>{item.name}</h3>
+            <p>Category: {item.category}</p>
+            <p>Price: ${item.price.toFixed(2)}</p>
+          </Link>
+        </div>
+      </div>
+    );
+  };
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
@@ -46,17 +66,29 @@ function Items() {
         <p>No items found</p>
       ) : (
         <>
-          <ul className="items-list">
-            {items.map(item => (
-              <li key={item.id} className="item-card">
-                <Link to={`/items/${item.id}`}>
-                  <h3>{item.name}</h3>
-                  <p>Category: {item.category}</p>
-                  <p>Price: ${item.price.toFixed(2)}</p>
-                </Link>
-              </li>
-            ))}
-          </ul>
+          <div className="virtualized-grid-container">
+            <AutoSizer>
+              {({ height, width }) => {
+                const columnCount = 3;
+                const rowCount = Math.ceil(items.length / columnCount);
+                const columnWidth = width / columnCount;
+                const rowHeight = 200; // Adjust based on your card height
+
+                return (
+                  <Grid
+                    columnCount={columnCount}
+                    columnWidth={columnWidth}
+                    height={height}
+                    rowCount={rowCount}
+                    rowHeight={rowHeight}
+                    width={width}
+                  >
+                    {ItemCard}
+                  </Grid>
+                );
+              }}
+            </AutoSizer>
+          </div>
 
           <div className="pagination">
             <button
@@ -87,6 +119,7 @@ function Items() {
           padding: 20px;
           max-width: 1200px;
           margin: 0 auto;
+          height: calc(100vh - 200px); /* Adjust based on your layout */
         }
 
         .search-container {
@@ -101,18 +134,16 @@ function Items() {
           border-radius: 4px;
         }
 
-        .items-list {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-          gap: 20px;
-          list-style: none;
-          padding: 0;
+        .virtualized-grid-container {
+          height: calc(100% - 100px); /* Adjust based on your layout */
         }
 
         .item-card {
           border: 1px solid #ddd;
           border-radius: 8px;
           padding: 15px;
+          margin: 10px;
+          height: calc(100% - 20px);
           transition: transform 0.2s;
         }
 
