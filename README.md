@@ -31,14 +31,11 @@
     <img alt="made by JhonatHeberson" src="https://img.shields.io/badge/made%20by-jhonatheberson-%237519C1">
   </a>
 
-  <!-- <a href="https://blog.rocketseat.com.br/">
-    <img alt="Stargazers" src="https://img.shields.io/badge/Blog-Rocketseat-%237159c1?style=flat&logo=ghost">
-    </a>  -->
 </p>
 
 <h4 align="center">
-  Status: development
-    <!-- Status: Finished -->
+  <!-- Status: development -->
+    Status: Finished
 </h4>
 
 <p align="center">
