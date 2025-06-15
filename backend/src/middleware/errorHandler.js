@@ -41,16 +41,23 @@ const errorHandler = (err, req, res, next) => {
   } else {
     // Production error response
     if (err.isOperational) {
-      res.status(err.statusCode).json({
-        status: err.status,
-        message: err.message
-      });
+      // For validation errors, format the response with details
+      if (err.name === 'ValidationError') {
+        const details = err.message.split(', ');
+        res.status(err.statusCode).json({
+          error: 'Validation failed',
+          details
+        });
+      } else {
+        res.status(err.statusCode).json({
+          error: err.message
+        });
+      }
     } else {
       // Programming or unknown errors
       console.error('ERROR 💥', err);
       res.status(500).json({
-        status: 'error',
-        message: 'Something went wrong'
+        error: 'Something went wrong'
       });
     }
   }
