@@ -152,7 +152,7 @@ $ npm start
 ```
 
 <p align="center">
-  <a href="https://github.com/jhonatheberson/challenge-bitgesell/blob/master/Insomnia_API_Ecoletajson.json" target="_blank"><img src="https://insomnia.rest/images/run.svg" alt="Run in Insomnia"></a>
+  <a href="https://github.com/jhonatheberson/challenge-bitgesell/blob/master/Insomnia_API.json" target="_blank"><img src="https://insomnia.rest/images/run.svg" alt="Run in Insomnia"></a>
 </p>
 
 #### Running the web application (Frontend)
