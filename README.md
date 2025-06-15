@@ -65,7 +65,7 @@
 
   - [x] Refactor blocking I/O
   - [x] Performance
-  - [ ] Testing
+  - [x] Testing
 
 - [] Frontend (React):
 
@@ -96,6 +96,34 @@ Both Frontend and Mobile need the Backend to be running to work.
 Before you begin, you will need to have the following tools installed on your machine:
 [Git](https://git-scm.com), [Node.js](https://nodejs.org/en/).
 In addition, it is good to have an editor to work with the code like [VSCode](https://code.visualstudio.com/)
+
+## Running with Docker Compose
+
+```bash
+# Build and start all services
+$ docker compose up -d
+
+# View logs
+$ docker compose logs -f
+
+# Stop all services
+$ docker compose down
+
+# Rebuild and restart services
+$ docker compose up -d --build
+```
+
+The Docker Compose setup includes:
+
+- Backend API (Node.js)
+- Frontend (React)
+- Redis (for caching)
+
+Services will be available at:
+
+- Frontend: <http://localhost:3000>
+- Backend API: <http://localhost:3001>
+- Redis: localhost:6379
 
 #### Rodando o Backend (servidor)
 
@@ -148,6 +176,24 @@ $ npm start
 
 # The application will open on the port: 3000 - go to http://localhost:3000
 
+```
+
+## Running Tests
+
+### Backend Tests
+
+```bash
+# Go to the backend folder
+$ cd backend
+
+# Run all tests
+$ npm test
+
+# Run tests with coverage
+$ npm test -- --coverage
+
+# Run tests in watch mode (useful during development)
+$ npm test -- --watch
 ```
 
 ## Objectives
