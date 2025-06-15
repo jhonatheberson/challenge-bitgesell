@@ -121,11 +121,13 @@ The Docker Compose setup includes:
 
 Services will be available at:
 
-- Frontend: <http://localhost:3000>
+- Frontend: <http://localhost>
 - Backend API: <http://localhost:3001>
 - Redis: localhost:6379
 
 #### Rodando o Backend (servidor)
+
+***need redis running 127.0.0.1:6379 locally to run via terminal***
 
 ```bash
 
