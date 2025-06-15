@@ -1,10 +1,18 @@
+/**
+ * Items API Routes
+ * Handles CRUD operations for items with pagination and search functionality
+ */
 const express = require('express');
 const fs = require('fs').promises;
 const path = require('path');
 const router = express.Router();
 const DATA_PATH = path.join(__dirname, '../../../data/items.json');
 
-// Utility to read data (non-blocking)
+/**
+ * Reads items data from the JSON file
+ * @returns {Promise<Array>} Array of items
+ * @throws {Error} If file read fails
+ */
 async function readData() {
   try {
     const raw = await fs.readFile(DATA_PATH, 'utf8');
@@ -18,12 +26,51 @@ async function readData() {
   }
 }
 
-// Utility to write data (non-blocking)
+/**
+ * Writes items data to the JSON file
+ * @param {Array} data - Array of items to write
+ * @returns {Promise<void>}
+ */
 async function writeData(data) {
   await fs.writeFile(DATA_PATH, JSON.stringify(data, null, 2), 'utf8');
 }
 
-// GET /api/items
+/**
+ * Validates item data
+ * @param {Object} item - Item to validate
+ * @returns {Array<string>} Array of validation errors
+ */
+function validateItem(item) {
+  const errors = [];
+
+  if (!item.name) {
+    errors.push('Name is required');
+  } else if (typeof item.name !== 'string') {
+    errors.push('Name must be a string');
+  } else if (item.name.trim().length === 0) {
+    errors.push('Name cannot be empty');
+  }
+
+  if (!item.category) {
+    errors.push('Category is required');
+  } else if (typeof item.category !== 'string') {
+    errors.push('Category must be a string');
+  } else if (item.category.trim().length === 0) {
+    errors.push('Category cannot be empty');
+  }
+
+  if (item.price === undefined) {
+    errors.push('Price is required');
+  } else if (typeof item.price !== 'number') {
+    errors.push('Price must be a number');
+  } else if (item.price < 0) {
+    errors.push('Price cannot be negative');
+  }
+
+  return errors;
+}
+
+// GET /api/items - List items with pagination and search
 router.get('/', async (req, res, next) => {
   try {
     const data = await readData();
@@ -33,9 +80,10 @@ router.get('/', async (req, res, next) => {
 
     // Apply search filter if query parameter exists
     if (q) {
+      const searchTerm = q.toLowerCase();
       results = results.filter(item =>
-        item.name.toLowerCase().includes(q.toLowerCase()) ||
-        item.category.toLowerCase().includes(q.toLowerCase())
+        item.name.toLowerCase().includes(searchTerm) ||
+        item.category.toLowerCase().includes(searchTerm)
       );
     }
 
@@ -57,12 +105,9 @@ router.get('/', async (req, res, next) => {
     const startIndex = (parsedPage - 1) * parsedLimit;
     const endIndex = startIndex + parsedLimit;
 
-    // Get paginated results
-    const paginatedResults = results.slice(startIndex, endIndex);
-
     // Return paginated response with metadata
     res.json({
-      data: paginatedResults,
+      data: results.slice(startIndex, endIndex),
       pagination: {
         currentPage: parsedPage,
         totalPages,
@@ -77,7 +122,7 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-// GET /api/items/:id
+// GET /api/items/:id - Get single item by ID
 router.get('/:id', async (req, res, next) => {
   try {
     const data = await readData();
@@ -98,40 +143,11 @@ router.get('/:id', async (req, res, next) => {
   }
 });
 
-// POST /api/items
+// POST /api/items - Create new item
 router.post('/', async (req, res, next) => {
   try {
     const item = req.body;
-
-    // Comprehensive validation
-    const validationErrors = [];
-
-    // Name validation
-    if (!item.name) {
-      validationErrors.push('Name is required');
-    } else if (typeof item.name !== 'string') {
-      validationErrors.push('Name must be a string');
-    } else if (item.name.trim().length === 0) {
-      validationErrors.push('Name cannot be empty');
-    }
-
-    // Category validation
-    if (!item.category) {
-      validationErrors.push('Category is required');
-    } else if (typeof item.category !== 'string') {
-      validationErrors.push('Category must be a string');
-    } else if (item.category.trim().length === 0) {
-      validationErrors.push('Category cannot be empty');
-    }
-
-    // Price validation
-    if (item.price === undefined) {
-      validationErrors.push('Price is required');
-    } else if (typeof item.price !== 'number') {
-      validationErrors.push('Price must be a number');
-    } else if (item.price < 0) {
-      validationErrors.push('Price cannot be negative');
-    }
+    const validationErrors = validateItem(item);
 
     if (validationErrors.length > 0) {
       return res.status(400).json({
