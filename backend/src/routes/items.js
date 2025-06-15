@@ -27,23 +27,51 @@ async function writeData(data) {
 router.get('/', async (req, res, next) => {
   try {
     const data = await readData();
-    const { limit, q } = req.query;
+    const { page = 1, limit = 10, q } = req.query;
+
     let results = data;
 
+    // Apply search filter if query parameter exists
     if (q) {
-      // Simple substring search (sub‑optimal)
-      results = results.filter(item => item.name.toLowerCase().includes(q.toLowerCase()));
+      results = results.filter(item =>
+        item.name.toLowerCase().includes(q.toLowerCase()) ||
+        item.category.toLowerCase().includes(q.toLowerCase())
+      );
     }
 
-    if (limit) {
-      const parsedLimit = parseInt(limit);
-      if (isNaN(parsedLimit) || parsedLimit < 0) {
-        return res.status(400).json({ error: 'Invalid limit parameter' });
+    // Parse and validate pagination parameters
+    const parsedPage = parseInt(page);
+    const parsedLimit = parseInt(limit);
+
+    if (isNaN(parsedPage) || parsedPage < 1) {
+      return res.status(400).json({ error: 'Invalid page parameter' });
+    }
+
+    if (isNaN(parsedLimit) || parsedLimit < 1) {
+      return res.status(400).json({ error: 'Invalid limit parameter' });
+    }
+
+    // Calculate pagination
+    const totalItems = results.length;
+    const totalPages = Math.ceil(totalItems / parsedLimit);
+    const startIndex = (parsedPage - 1) * parsedLimit;
+    const endIndex = startIndex + parsedLimit;
+
+    // Get paginated results
+    const paginatedResults = results.slice(startIndex, endIndex);
+
+    // Return paginated response with metadata
+    res.json({
+      data: paginatedResults,
+      pagination: {
+        currentPage: parsedPage,
+        totalPages,
+        totalItems,
+        itemsPerPage: parsedLimit,
+        hasNextPage: parsedPage < totalPages,
+        hasPreviousPage: parsedPage > 1
       }
-      results = results.slice(0, parsedLimit);
-    }
-
-    res.json(results);
+    });
   } catch (err) {
     next(err);
   }

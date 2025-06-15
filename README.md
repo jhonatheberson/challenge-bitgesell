@@ -70,7 +70,7 @@
 - [x] Frontend (React):
 
   - [x] Memory Leak
-  - [ ] Pagination & Search
+  - [x] Pagination & Search
   - [ ] Performance
   - [ ] UI/UX Polish
 
