@@ -3,6 +3,9 @@ import { useData } from '../state/DataContext';
 import { Link } from 'react-router-dom';
 import { FixedSizeGrid as Grid } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
+import '../styles/variables.css';
+import '../styles/common.css';
+import '../styles/components/Items.css';
 
 function Items() {
   const { items, pagination, loading, error, fetchItems } = useData();
@@ -36,8 +39,8 @@ function Items() {
     const item = items[index];
     return (
       <div style={style}>
-        <div className="item-card">
-          <Link to={`/items/${item.id}`}>
+        <div className="item-card" role="article">
+          <Link to={`/items/${item.id}`} aria-label={`View details for ${item.name}`}>
             <h3>{item.name}</h3>
             <p>Category: {item.category}</p>
             <p>Price: ${item.price.toFixed(2)}</p>
@@ -47,8 +50,26 @@ function Items() {
     );
   };
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error}</p>;
+  const LoadingSkeleton = () => (
+    <div className="skeleton-container">
+      {[...Array(6)].map((_, index) => (
+        <div key={index} className="skeleton-card" role="status" aria-label="Loading item">
+          <div className="skeleton-title"></div>
+          <div className="skeleton-text"></div>
+          <div className="skeleton-text"></div>
+        </div>
+      ))}
+    </div>
+  );
+
+  if (error) return (
+    <div className="error-container" role="alert">
+      <p>Error: {error}</p>
+      <button onClick={() => fetchItems(1, pagination.itemsPerPage, '')} className="button button-danger">
+        Retry
+      </button>
+    </div>
+  );
 
   return (
     <div className="items-container">
@@ -58,12 +79,20 @@ function Items() {
           placeholder="Search items..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="search-input"
+          className="input"
+          aria-label="Search items"
         />
       </div>
 
-      {items.length === 0 ? (
-        <p>No items found</p>
+      {loading ? (
+        <LoadingSkeleton />
+      ) : items.length === 0 ? (
+        <div className="no-items" role="status">
+          <p>No items found</p>
+          <button onClick={() => setSearchQuery('')} className="button button-secondary">
+            Clear Search
+          </button>
+        </div>
       ) : (
         <>
           <div className="virtualized-grid-container">
@@ -72,7 +101,7 @@ function Items() {
                 const columnCount = 3;
                 const rowCount = Math.ceil(items.length / columnCount);
                 const columnWidth = width / columnCount;
-                const rowHeight = 200; // Adjust based on your card height
+                const rowHeight = 200;
 
                 return (
                   <Grid
@@ -90,16 +119,17 @@ function Items() {
             </AutoSizer>
           </div>
 
-          <div className="pagination">
+          <div className="pagination" role="navigation" aria-label="Pagination">
             <button
               onClick={() => handlePageChange(pagination.currentPage - 1)}
               disabled={!pagination.hasPreviousPage}
               className="pagination-button"
+              aria-label="Previous page"
             >
               Previous
             </button>
 
-            <span className="pagination-info">
+            <span className="pagination-info" aria-live="polite">
               Page {pagination.currentPage} of {pagination.totalPages}
             </span>
 
@@ -107,91 +137,13 @@ function Items() {
               onClick={() => handlePageChange(pagination.currentPage + 1)}
               disabled={!pagination.hasNextPage}
               className="pagination-button"
+              aria-label="Next page"
             >
               Next
             </button>
           </div>
         </>
       )}
-
-      <style jsx>{`
-        .items-container {
-          padding: 20px;
-          max-width: 1200px;
-          margin: 0 auto;
-          height: calc(100vh - 200px); /* Adjust based on your layout */
-        }
-
-        .search-container {
-          margin-bottom: 20px;
-        }
-
-        .search-input {
-          width: 100%;
-          padding: 10px;
-          font-size: 16px;
-          border: 1px solid #ddd;
-          border-radius: 4px;
-        }
-
-        .virtualized-grid-container {
-          height: calc(100% - 100px); /* Adjust based on your layout */
-        }
-
-        .item-card {
-          border: 1px solid #ddd;
-          border-radius: 8px;
-          padding: 15px;
-          margin: 10px;
-          height: calc(100% - 20px);
-          transition: transform 0.2s;
-        }
-
-        .item-card:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-
-        .item-card a {
-          text-decoration: none;
-          color: inherit;
-        }
-
-        .item-card h3 {
-          margin: 0 0 10px 0;
-          color: #333;
-        }
-
-        .item-card p {
-          margin: 5px 0;
-          color: #666;
-        }
-
-        .pagination {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          margin-top: 20px;
-          gap: 10px;
-        }
-
-        .pagination-button {
-          padding: 8px 16px;
-          border: 1px solid #ddd;
-          border-radius: 4px;
-          background: white;
-          cursor: pointer;
-        }
-
-        .pagination-button:disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
-        }
-
-        .pagination-info {
-          margin: 0 10px;
-        }
-      `}</style>
     </div>
   );
 }
