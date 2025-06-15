@@ -79,7 +79,7 @@
 ### Web
 
 <p align="center" style="display: flex; align-items: flex-start; justify-content: center;">
-  <img alt="Ecoleta" title="#Ecoleta" src="./assets/web.png" width="400px">
+  <img alt="Ecoleta" title="#Ecoleta" src="./assets/web-statistics.png" width="400px">
 </p>
 
 ## How it works
